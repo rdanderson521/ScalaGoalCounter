@@ -1,0 +1,10 @@
+[debug] > Exec(compile, None, None)
+[debug] Evaluating tasks: Compile / compile
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[info] compiling 1 Scala source to C:\Users\rdand\Documents\bigdata\SparkGoalCounter\target\scala-2.12\classes ...
+[warn] there was one deprecation warning (since 2.0.0); re-run with -deprecation for details
+[warn] one warning found
+[info] done compiling
+[debug] Forcing garbage collection...
+[success] Total time: 2 s, completed 18 Dec 2020, 03:50:03
+[debug] > Exec(idea-shell, None, None)
