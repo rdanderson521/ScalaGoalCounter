@@ -1,0 +1,14 @@
+[debug] > Exec(compile, None, None)
+[warn] build source files have changed
+[warn] modified files: 
+[warn]   C:\Users\rdand\Documents\bigdata\SparkGoalCounter\build.sbt
+[warn] Apply these changes by running `reload`.
+[warn] Automatically reload the build when source changes are detected by setting `Global / onChangedBuildSource := ReloadOnSourceChanges`.
+[warn] Disable this warning by setting `Global / onChangedBuildSource := IgnoreSourceChanges`.
+[debug] Evaluating tasks: Compile / compile
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[info] compiling 1 Scala source to C:\Users\rdand\Documents\bigdata\SparkGoalCounter\target\scala-2.12\classes ...
+[info] done compiling
+[debug] Forcing garbage collection...
+[success] Total time: 1 s, completed 18 Dec 2020, 09:09:34
+[debug] > Exec(idea-shell, None, None)

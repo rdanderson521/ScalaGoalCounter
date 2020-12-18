@@ -1,41 +1,42 @@
-
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SQLContext
 
+// https://stackoverflow.com/questions/24299427/how-do-i-convert-csv-file-to-rdd
+class SimpleCSVHeader(header:Array[String]) extends Serializable {
+  val index = header.zipWithIndex.toMap
+  def apply(array:Array[String], key:String):String = array(index(key))
+}
 
 object GoalCounter {
 
-  // args should be the paths of the data in the hdfs system
+  // args should be the user name and directory
   def main(args: Array[String])
   {
     val hdfsUrl = "hdfs://namenode:8020/user/";
-    val username = "rdanderson521";
-    val inputPath = "/goals/input/"
-    val outputPath = "/goals/output/team-goals"
+    val username = "rdanderson521"
+    val inputPath = hdfsUrl + username + "/goals/input/"
+    val outputPath = hdfsUrl + username + "/goals/output/team-goals"
 
-    val conf = new SparkConf().setAppName("Simple Application")
+    val conf = new SparkConf().setAppName("GoalCounter")
     val sc = new SparkContext(conf)
-    val sqlContext = new SQLContext(sc)
 
-    if (args.length >= 1)
-    {
-      var data = sqlContext.read.format("csv").option("header", "true").load(hdfsUrl+username+inputPath+args(0))
-      for( i <- 1 to args.length - 1) {
-        val tempData = sqlContext.read.format("csv").option("header", "true").load(hdfsUrl+username+inputPath+args(i))
-        val mergedData = data.union(tempData)
-        data = mergedData
-      }
+    val data = sc.textFile(inputPath)
 
-      val homeGoalsMapped = data.rdd.map(row => (row.getString(row.fieldIndex("HomeTeam")) -> row.getString(row.fieldIndex("FTHG")) ))
-      val awayGoalsMapped = data.rdd.map(row => (row.getString(row.fieldIndex("AwayTeam")) -> row.getString(row.fieldIndex("FTAG")) ))
+    val splitData = data.map(line => line.split(",").map(elem => elem.trim) )
 
-      val mergedGoalMapped = homeGoalsMapped.union(awayGoalsMapped)
+    val header = new SimpleCSVHeader(splitData.take(1)(0) )
 
-      val teamGoals = mergedGoalMapped.reduceByKey( (a,b) => a + b )
+    // removes header lines
+    val filteredData = splitData.filter(line => header(line,"HomeTeam") != "HomeTeam")
 
-      teamGoals.saveAsTextFile(hdfsUrl+username+outputPath)
-    }
+    val homeTeamGoals = filteredData.map(line => (header(line,"HomeTeam"), header(line,"FTHG").toInt))
+    val awayTeamGoals = filteredData.map(line => (header(line,"AwayTeam"), header(line,"FTAG").toInt))
+
+    val mergedGoals = homeTeamGoals.union(awayTeamGoals)
+
+    val teamGoals = mergedGoals.reduceByKey( (a,b) => a + b )
+
+    teamGoals.saveAsTextFile(outputPath)
   }
 
 }
