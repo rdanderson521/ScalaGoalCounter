@@ -11,7 +11,8 @@ object GoalCounter {
   {
     val hdfsUrl = "hdfs://namenode:8020/user/";
     val username = "rdanderson521";
-    val outputPath = "/wc/output/goals-output"
+    val inputPath = "/goals/input"
+    val outputPath = "/goals/output/team-goals"
 
     val conf = new SparkConf().setAppName("Simple Application")
     val sc = new SparkContext(conf)
@@ -19,9 +20,9 @@ object GoalCounter {
 
     if (args.length >= 1)
     {
-      var data = sqlContext.read.format("csv").option("header", "true").load(hdfsUrl+username+args(0))
+      var data = sqlContext.read.format("csv").option("header", "true").load(hdfsUrl+username+inputPath+args(0))
       for( i <- 1 to args.length - 1) {
-        val tempData = sqlContext.read.format("csv").option("header", "true").load(hdfsUrl+username+args(i))
+        val tempData = sqlContext.read.format("csv").option("header", "true").load(hdfsUrl+username+inputPath+args(i))
         val mergedData = data.union(tempData)
         data = mergedData
       }
