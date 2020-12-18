@@ -11,7 +11,7 @@ object GoalCounter {
   {
     val hdfsUrl = "hdfs://namenode:8020/user/";
     val username = "rdanderson521";
-    val inputPath = "/goals/input"
+    val inputPath = "/goals/input/"
     val outputPath = "/goals/output/team-goals"
 
     val conf = new SparkConf().setAppName("Simple Application")
